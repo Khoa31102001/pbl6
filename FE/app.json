@@ -1,0 +1,9 @@
+{
+    "apps": [
+      {
+        "name": "eshopping-FE",
+        "script": "npm start"
+      }
+    ]
+}
+  

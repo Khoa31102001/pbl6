@@ -1,0 +1,64 @@
+version: 2.1
+aliases:
+  - &restore-cache
+    restore_cache:
+        keys:
+        - v1-dependencies-
+        # fallback to using the latest cache if no exact match is found
+        - v1-dependencies-
+  - &install-deps
+    run:
+        name: Install dependencies
+        command: cd BE/api-service && npm install --legacy-peer-deps
+
+orbs:
+  node: circleci/node@3.0.0
+
+jobs:
+  build:
+    environment:
+      DOCKER_IMAGE: ichhoa129/eshopping
+      DOCKER_TAG: latest
+    working_directory: ~/eshopping/BE/api-service
+    docker:
+      - image: circleci/node:16
+      - image: docker:17.09.1-ce-git  
+    steps:
+      - checkout
+      - setup_remote_docker
+      - *restore-cache
+      - run: npm cache clear --force
+      - run:
+          name: Update NPM version
+          command: 'sudo npm install -g npm@latest'
+      - *install-deps
+      - save_cache:
+          key: v1-dependencies-{{ checksum "BE/api-service/package.json" }}
+          paths:
+            - ./node_modules
+            
+  deploy:
+    machine:
+      enabled: true
+    working_directory: ~/eshopping/BE/api-service
+    steps:
+      - add_ssh_keys:
+          fingerprints:
+            - "fc:30:93:13:36:a1:d6:59:c9:41:65:7a:68:ff:22:50"
+      - run: 
+          name: Deploy via ssh
+          command: |
+              echo Starting to deploy server
+              ssh -v $SSH_USER@$SSH_HOST 'cd ~/eshopping/BE && git checkout dev && git pull && chmod 777 ~/eshopping/script/deploy.sh &&  ~/eshopping/script/deploy.sh'
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - dev

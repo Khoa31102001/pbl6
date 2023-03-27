@@ -1,0 +1,13 @@
+{
+    "apps": [
+      {
+        "name": "eshopping-api",
+        "script": "cd api-service && yarn start"
+      },
+      {
+        "name": "eshopping-email",
+        "script": "cd email-service && yarn start"
+      }
+    ]
+}
+  

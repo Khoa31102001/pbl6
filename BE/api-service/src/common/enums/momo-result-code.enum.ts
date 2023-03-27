@@ -1,0 +1,5 @@
+export enum MOMO_RESULT_CODE {
+  SUCCESSFUL = 0,
+  QR_CODE_EXPIRED = 1005,
+  USER_DENIED = 1006,
+}

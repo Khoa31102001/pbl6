@@ -1,0 +1,9 @@
+{
+    "apps": [
+      {
+        "name": "eshopping-api",
+        "script": "cd api-service && yarn start:dev"
+      }
+    ]
+}
+  

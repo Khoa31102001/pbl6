@@ -1,0 +1,1 @@
+enum Role { consumer, seller }
